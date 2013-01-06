@@ -1,0 +1,75 @@
+<#@ template language="C#" debug="True" #>
+<#@ output extension="cs" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System.CodeDom.Compiler" #>
+<#@ assembly name="System.Core" #> <#@ assembly name="System.ServiceModel" #> <#@ assembly name="System.ServiceModel.Web" #> 
+<#@ include file="Endpoint.ttinclude" #><#@ include file="Facade.ttinclude" #><#@ include file="Format.ttinclude" #><#@ include file="HttpVerb.ttinclude" #><#@ include file="MetadataProvider.ttinclude" #><#@ include file="Request.ttinclude" #><#@ include file="T4Toolbox.tt" #>
+using DTOs;
+using Newtonsoft.Json;
+using System;
+using System.Net;
+
+namespace WcfServiceDirectory
+{
+	public class Services
+    {
+<#
+	try 
+	{
+		var facades = new MetadataProvider().GetFacades();
+		foreach (Facade facade in facades)
+		{    
+#>
+		public <#=facade.Name.Substring(1)#> <#=facade.Name.Substring(1)#> { get; set; }
+<#
+		}
+#>
+	}
+<#  
+		foreach (var facade in facades)
+		{
+#>    
+	public class <#=facade.Name.Substring(1)#>
+	{
+<#
+			foreach(Endpoint endpoint in facade.Endpoints)
+            {
+#>
+		public void <#=endpoint.Name#>(<#foreach(Request request in endpoint.Requests) {#><#=request.Type.Name#> <#=request.Name#>, <#} if (endpoint.Response.Name!="Void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.Name#>>> callback<#}#>)
+        {
+            var client = new WebClient();
+            var address = new Uri(string.Concat("http://server", "<#= endpoint.UriTemplate #>"));
+			<# 
+			var downloadOrUpload = (endpoint.HttpVerb == HttpVerb.GET) ? "Download" : "Upload";
+			if (endpoint.Response.Name!="Void") 
+			{
+			#>
+
+            client.<#=downloadOrUpload#>StringCompleted += (sender, eventArgs) =>
+            {
+                var response = JsonConvert.DeserializeObject<<#=endpoint.Response.Name#>>(eventArgs.Result);
+                callback(new CallCompleteEventArgs<<#=endpoint.Response.Name#>>(response, eventArgs));
+            };
+            <#
+			}
+			#>
+
+            client.<#=downloadOrUpload#>StringAsync(address);
+        }
+
+<#
+			}
+#>
+	}
+<#
+		}
+    }
+	catch (Exception e) 
+	{
+		var errors = new CompilerErrorCollection();
+		var error = new CompilerError(this.Host.TemplateFile, 0, 0, "0", e.Message);
+		errors.Add(error);
+		this.Host.LogErrors(errors);
+    }
+#>}

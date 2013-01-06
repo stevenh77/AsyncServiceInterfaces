@@ -1,0 +1,19 @@
+﻿<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#+
+    public class Endpoint
+    {
+        public string Name { get; set; }
+        public IList<Request> Requests { get; set; }
+        public Type Response { get; set; }
+        public HttpVerb HttpVerb { get; set; }
+        public Format RequestFormat { get; set; }
+        public Format ResponseFormat { get; set; }
+        public string UriTemplate { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+#>

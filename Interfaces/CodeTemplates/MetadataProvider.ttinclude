@@ -1,0 +1,74 @@
+﻿<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.ServiceModel" #>
+<#@ import namespace="System.ServiceModel.Web" #>
+<#+
+    public class MetadataProvider
+    {
+        public IList<Facade> GetFacades()
+        {
+            var response = new List<Facade>();
+
+			var assembly = Assembly.LoadFrom(@"C:\Projects\GitHub\AsyncServiceInterfaces\Interfaces\bin\Debug\Interfaces.dll");
+            var facadeInterfaces = assembly.GetTypes()
+                                           .Where(t => t.IsInterface && t.Name.EndsWith("Facade"));
+			
+            foreach (Type facadeInterface in facadeInterfaces)
+            {
+                var facadeMetadata = new Facade() { Name = facadeInterface.Name };
+
+                foreach (MethodInfo method in facadeInterface.GetMethods())
+                {
+                    var webInvokeAttribute = GetWebInvokeAttribute(method);
+                    if (webInvokeAttribute == null) continue;
+
+                    var endpoint = CreateEndpoint(method, webInvokeAttribute);
+                    facadeMetadata.Endpoints.Add(endpoint);
+                }
+                response.Add(facadeMetadata);
+            }
+
+            return response;
+        }
+
+		private Endpoint CreateEndpoint(MethodInfo method, WebInvokeAttribute webInvokeAttribute)
+        {
+            var request = CreateRequest(method);
+
+            var endpoint = new Endpoint()
+            {
+                Name = method.Name,
+                Requests = request,
+                HttpVerb = (HttpVerb)Enum.Parse(typeof(HttpVerb), webInvokeAttribute.Method),
+                Response = method.ReturnType,
+                RequestFormat = (Format)Enum.Parse(typeof(Format), webInvokeAttribute.RequestFormat.ToString()),
+                ResponseFormat = (Format)Enum.Parse(typeof(Format), webInvokeAttribute.ResponseFormat.ToString()),
+                UriTemplate = webInvokeAttribute.UriTemplate
+            };
+            return endpoint;
+        }
+
+        private List<Request> CreateRequest(MethodInfo method)
+        {
+            var request = new List<Request>();
+            foreach (var parameter in method.GetParameters())
+            {
+                request.Add(new Request() { Type = parameter.ParameterType, Name = parameter.Name });
+            }
+            return request;
+        }
+
+        public WebInvokeAttribute GetWebInvokeAttribute(MethodInfo method)
+        {
+            var attributes = method.GetCustomAttributes(false)
+                                   .Where(a => a.GetType() == typeof(WebInvokeAttribute) || a.GetType() == typeof(OperationContractAttribute));
+
+            // if the interface has both WebInvoke and OperationContract attributes return the WebInvokeAttribute else return null
+            return (attributes.Count() == 2)
+                ? (WebInvokeAttribute)method.GetCustomAttributes(typeof(WebInvokeAttribute), false).First()
+                : null;
+        }
+    }
+#>

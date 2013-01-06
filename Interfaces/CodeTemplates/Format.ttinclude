@@ -1,0 +1,8 @@
+﻿<#+
+    public enum Format
+    {
+        NotSet = 0,
+        Json,
+        Xml
+    }
+#>

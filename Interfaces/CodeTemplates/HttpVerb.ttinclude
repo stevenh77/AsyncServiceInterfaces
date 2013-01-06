@@ -1,0 +1,11 @@
+﻿<#+
+    public enum HttpVerb
+    {
+        NotSet = 0,
+        DELETE,
+        GET,
+        POST,
+        PUT,
+        UPDATE
+    }
+#>
