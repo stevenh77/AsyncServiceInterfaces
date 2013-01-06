@@ -63,6 +63,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="clientaccesspolicy.xml" />
     <Content Include="ClientBin\WcfServiceDirectory.xap" />
     <Content Include="Global.asax" />
     <Content Include="LoginFacade.svc" />

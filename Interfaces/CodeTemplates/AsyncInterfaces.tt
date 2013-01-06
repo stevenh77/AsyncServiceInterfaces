@@ -6,9 +6,6 @@
 <#@ assembly name="System.Core" #> <#@ assembly name="System.ServiceModel" #> <#@ assembly name="System.ServiceModel.Web" #> 
 <#@ include file="Endpoint.ttinclude" #><#@ include file="Facade.ttinclude" #><#@ include file="Format.ttinclude" #><#@ include file="HttpVerb.ttinclude" #><#@ include file="MetadataProvider.ttinclude" #><#@ include file="Request.ttinclude" #><#@ include file="T4Toolbox.tt" #>
 <#
-	try 
-	{
-		var facades = new MetadataProvider().GetFacades();
 #>
 /***********************
 **** GENERATED CODE ****
@@ -23,27 +20,29 @@ namespace WcfServiceDirectory
 		public Services()
 		{ 
 <#
-		foreach (Facade facade in facades) 
-		{
+	var facades = new MetadataProvider().GetFacades();
+
+	foreach (Facade facade in facades) 
+	{
 #>
 			this.<#=facade.Name.Substring(1)#> = new <#=facade.Name.Substring(1)#>(); 
 <#
-		} 
+	} 
 #>
 		}
 
 <# 
-		foreach (Facade facade in facades)
-		{    
+	foreach (Facade facade in facades)
+	{    
 #>
 		public <#=facade.Name.Substring(1)#> <#=facade.Name.Substring(1)#> { get; set; }
 <#
-		}
+	}
 #>
 	}
 <#  
-		foreach (var facade in facades)
-		{
+	foreach (var facade in facades)
+	{
 #>    
 	public class <#=facade.Name.Substring(1)#>
 	{
@@ -52,44 +51,27 @@ namespace WcfServiceDirectory
 		public <#=facade.Name.Substring(1)#>()  { this.serviceExecutor = new ServiceExecutor(); }
 
 <#
-			foreach(Endpoint endpoint in facade.Endpoints)
-			{
-				var responseType = (endpoint.Response.Name=="Void") ? "Object" : endpoint.Response.FullName;
-
-				if (endpoint.HttpVerb==HttpVerb.GET) 
-				{
+	foreach(Endpoint endpoint in facade.Endpoints)
+	{
+		var responseType = (endpoint.Response.Name=="Void") ? "Object" : endpoint.Response.FullName;
+		var serviceMethod = (endpoint.HttpVerb==HttpVerb.GET) ? "Get" : "Put";
+		var requestParameterInfoIfRequired = (endpoint.Request!=null) 
+											? string.Format("{0} {1}, ", endpoint.Request.Type.FullName, endpoint.Request.Name)
+											: string.Empty; 
+		var jsonRequestIfRequired = (endpoint.Request!=null) 
+									? string.Format("JsonConvert.SerializeObject({0}),", endpoint.Request.Name) 
+									: string.Empty;
 #>
-		public void <#=endpoint.Name#>(<# if (endpoint.Response.Name!="Void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
+		public void <#=endpoint.Name#>(<#=requestParameterInfoIfRequired#>Action<CallCompleteEventArgs<<#=responseType#>>> callback)
 		{
-			serviceExecutor.Get<<#=responseType#>>("<#=endpoint.UriTemplate#>", <# if (endpoint.Response.Name=="Void") {#>null<#} else {#>callback<#}#>);
+			serviceExecutor.<#=serviceMethod#><<#=responseType#>>("<#=endpoint.UriTemplate#>", <#=jsonRequestIfRequired#> callback);
 		}
 
-<#
-				}
-				else
-				{
-#>
-		public void <#=endpoint.Name#>(<#=endpoint.Request.Type.FullName#> <#=endpoint.Request.Name#>, <# if (endpoint.Response.Name!="Void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
-		{
-			var jsonRequest = JsonConvert.SerializeObject(<#=endpoint.Request.Name#>);
-			serviceExecutor.Post<<#=responseType#>>("<#=endpoint.UriTemplate#>", jsonRequest, <# if (endpoint.Response.Name=="Void") {#>null<#} else {#>callback<#}#>);
-		}
-
-<#
-			}
-		}
-#>
-	}	
-	
 <#
 	}
-}
-catch (Exception e) 
-{
-	var errors = new CompilerErrorCollection();
-	var error = new CompilerError(this.Host.TemplateFile, 0, 0, "0", e.Message);
-	errors.Add(error);
-	this.Host.LogErrors(errors);
+#>
+	}	
+<#
 }
 #>
 }

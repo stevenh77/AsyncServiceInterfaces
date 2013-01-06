@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Browser;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -21,11 +22,14 @@ namespace WcfServiceDirectory
             this.Exit += this.Application_Exit;
             this.UnhandledException += this.Application_UnhandledException;
 
+            HttpWebRequest.RegisterPrefix("http://", WebRequestCreator.ClientHttp);
+            HttpWebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
+
             InitializeComponent();
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
-        {
+        {            
             this.RootVisual = new MainPage();
         }
 

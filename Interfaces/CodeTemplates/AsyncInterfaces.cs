@@ -27,22 +27,20 @@ namespace WcfServiceDirectory
 
 		public void GetLogin(Action<CallCompleteEventArgs<DTOs.GetLoginResponse>> callback)
 		{
-			serviceExecutor.Get<DTOs.GetLoginResponse>("/Login", callback);
+			serviceExecutor.Get<DTOs.GetLoginResponse>("/Login",  callback);
 		}
 
 		public void UpdateLogin(DTOs.UpdateLoginRequest request, Action<CallCompleteEventArgs<DTOs.UpdateLoginResponse>> callback)
 		{
-			var jsonRequest = JsonConvert.SerializeObject(request);
-			serviceExecutor.Post<DTOs.UpdateLoginResponse>("/Login", jsonRequest, callback);
+			serviceExecutor.Put<DTOs.UpdateLoginResponse>("/Login", JsonConvert.SerializeObject(request), callback);
 		}
 
-		public void WriteToLog()
+		public void WriteToLog(Action<CallCompleteEventArgs<Object>> callback)
 		{
-			serviceExecutor.Get<Object>("/Login/WriteToLog", null);
+			serviceExecutor.Get<Object>("/Login/WriteToLog",  callback);
 		}
 
 	}	
-	
     
 	public class TradeFacade
 	{
@@ -52,10 +50,8 @@ namespace WcfServiceDirectory
 
 		public void UpdateTradesDatabase(System.String userId, Action<CallCompleteEventArgs<System.Int32>> callback)
 		{
-			var jsonRequest = JsonConvert.SerializeObject(userId);
-			serviceExecutor.Post<System.Int32>("/Trades", jsonRequest, callback);
+			serviceExecutor.Put<System.Int32>("/Trades", JsonConvert.SerializeObject(userId), callback);
 		}
 
 	}	
-	
 }

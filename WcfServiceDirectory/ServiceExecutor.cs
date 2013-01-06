@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Net;
+using System.Text;
 
 namespace WcfServiceDirectory
 {
@@ -15,7 +16,7 @@ namespace WcfServiceDirectory
     public interface IServiceExecutor
     {
         void Get<TResponse>(string uriTemplate, Action<CallCompleteEventArgs<TResponse>> callback);
-        void Post<TResponse>(string uriTemplate, string request, Action<CallCompleteEventArgs<TResponse>> callback);
+        void Put<TResponse>(string uriTemplate, string request, Action<CallCompleteEventArgs<TResponse>> callback);
     }
 
     public class ServiceExecutor : IServiceExecutor
@@ -38,7 +39,7 @@ namespace WcfServiceDirectory
             client.DownloadStringAsync(address);
         }
 
-        public void Post<TResponse>(string uriTemplate, string request, Action<CallCompleteEventArgs<TResponse>> callback)
+        public void Put<TResponse>(string uriTemplate, string request, Action<CallCompleteEventArgs<TResponse>> callback)
         {
             var client = new WebClient();
             var address = GetUri(uriTemplate);
@@ -48,8 +49,8 @@ namespace WcfServiceDirectory
                     var response = JsonConvert.DeserializeObject<TResponse>(eventArgs.Result);
                     callback(new CallCompleteEventArgs<TResponse>(response, eventArgs)); 
                 };
-
-            client.UploadStringAsync(address, request);
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            client.UploadStringAsync(address, "PUT", request);
         }
 
         private Uri GetUri(string uriTemplate)
