@@ -1,4 +1,6 @@
 ﻿using DTOs;
+using System;
+
 namespace WcfServiceDirectory
 {
     public partial class MainPage
@@ -6,17 +8,25 @@ namespace WcfServiceDirectory
         public MainPage()
         {
             InitializeComponent();
-            var services = new Services();
 
-            // First service call
-            services.LoginFacade.GetLogin(this.OnGetLoginComplete);
+            try
+            {
+                var services = new Services();
 
-            // Second service
-            var request = new UpdateLoginRequest() { Payload = "Steve (calling UpdateLogin)" };
-            services.LoginFacade.UpdateLogin(request, this.OnUpdateLoginComplete);
+                // First service call
+                services.LoginFacade.GetLogin(this.OnGetLoginComplete);
 
-            // Third service
-            services.LoginFacade.WriteToLog(null);
+                // Second service
+                var request = new UpdateLoginRequest() { Payload = "Steve (calling UpdateLogin)" };
+                services.LoginFacade.UpdateLogin(request, this.OnUpdateLoginComplete);
+
+                // Third service
+                services.LoginFacade.WriteToLog(null);
+            }
+            catch (Exception e)
+            {
+                this.ErrorTextBlock.Text = Environment.NewLine + "Exception: " + e.Message;
+            }
         }
 
         private void OnGetLoginComplete(CallCompleteEventArgs<GetLoginResponse> e)
@@ -24,11 +34,12 @@ namespace WcfServiceDirectory
             if (e.Error == null && e.Result != null)
             {
                 //success
-
+                this.GetLoginResponseTextBlock.Text = "GetLoginResponse received " + e.Result.Payload;
             }
             else
             {
                 //failed
+                this.ErrorTextBlock.Text = Environment.NewLine + "GetLogin exception: " + e.Error.Message;
             }
         }
 
@@ -37,11 +48,12 @@ namespace WcfServiceDirectory
             if (e.Error == null && e.Result != null)
             {
                 //success
-
+                this.UpdateLoginResponseTextBlock.Text = "UpdateLoginResponse received " + e.Result.Payload;
             }
             else
             {
                 //failed
+                this.ErrorTextBlock.Text += Environment.NewLine + "UpdateLogin exception: " + e.Error.Message;
             }
         }
     }
