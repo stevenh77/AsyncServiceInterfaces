@@ -6,14 +6,14 @@ namespace WcfServiceDirectory.Web
 {
     public class LoginFacade : ILoginFacade
     {
-        public GetLoginResponse GetLogin(string request)
+        public GetLoginResponse GetLogin()
         {
-            return new GetLoginResponse() { Payload = "Welcome " + request}; 
+            return new GetLoginResponse() { Payload = "Welcome!" }; 
         }
 
         public UpdateLoginResponse UpdateLogin(UpdateLoginRequest request)
         {
-            return new UpdateLoginResponse() { Payload = "Updated" + request.Payload }; 
+            return new UpdateLoginResponse() { Payload = "Updated " + request.Payload }; 
         }
 
         public void WriteToLog()

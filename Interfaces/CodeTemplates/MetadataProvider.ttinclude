@@ -40,7 +40,7 @@
             var endpoint = new Endpoint()
             {
                 Name = method.Name,
-                Requests = request,
+                Request = request,
                 HttpVerb = (HttpVerb)Enum.Parse(typeof(HttpVerb), webInvokeAttribute.Method),
                 Response = method.ReturnType,
                 RequestFormat = (Format)Enum.Parse(typeof(Format), webInvokeAttribute.RequestFormat.ToString()),
@@ -50,14 +50,11 @@
             return endpoint;
         }
 
-        private List<Request> CreateRequest(MethodInfo method)
+        private Request CreateRequest(MethodInfo method)
         {
-            var request = new List<Request>();
-            foreach (var parameter in method.GetParameters())
-            {
-                request.Add(new Request() { Type = parameter.ParameterType, Name = parameter.Name });
-            }
-            return request;
+            var parameter = method.GetParameters().FirstOrDefault();
+			if (parameter == null) return null;
+            return new Request() { Type = parameter.ParameterType, Name = parameter.Name };
         }
 
         public WebInvokeAttribute GetWebInvokeAttribute(MethodInfo method)

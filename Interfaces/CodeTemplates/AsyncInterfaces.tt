@@ -14,12 +14,13 @@
 **** GENERATED CODE ****
 ************************/
 using System;
+using Newtonsoft.Json;
 
 namespace WcfServiceDirectory
 {
 	public partial class Services
     {
-		public Services()
+		public Services() 
 		{ 
 <#
 foreach (Facade facade in facades) 
@@ -59,10 +60,13 @@ foreach (var facade in facades)
 <#
 foreach(Endpoint endpoint in facade.Endpoints)
 {
+var responseType = (endpoint.Response.Name=="Void") ? "void" : endpoint.Response.FullName;
+
+if (endpoint.HttpVerb==HttpVerb.GET) 
+{
+
+}
 #>
-		public void <#=endpoint.Name#>(<#foreach(Request request in endpoint.Requests) {#><#=request.Type.FullName#> <#=request.Name#>, <#} if (endpoint.Response.Name!="Void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
-        {
-			serviceExecutor.<#if (endpoint.HttpVerb==HttpVerb.GET) {#>Get(<#} else {#>Post(<#}#><#if (endpoint.Response.Name=="Void") {#>typeof(void<#}else{#>typeof(<#=endpoint.Response.FullName#><#}#>), "<#=endpoint.UriTemplate#>");
         } 
 
 <#

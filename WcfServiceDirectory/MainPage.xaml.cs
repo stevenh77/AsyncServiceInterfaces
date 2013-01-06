@@ -8,13 +8,31 @@ namespace WcfServiceDirectory
             InitializeComponent();
             var services = new Services();
 
-            services.LoginFacade.WriteToLog();
+            // First service call
+            services.LoginFacade.GetLogin(this.OnGetLoginComplete);
 
-            var request = new GetLoginRequest();
-            services.LoginFacade.GetLogin(request, this.OnGetLoginComplete);
+            // Second service
+            var request = new UpdateLoginRequest() { Payload = "Steve (calling UpdateLogin)" };
+            services.LoginFacade.UpdateLogin(request, this.OnUpdateLoginComplete);
+
+            // Third service
+            services.LoginFacade.WriteToLog();
         }
 
         private void OnGetLoginComplete(CallCompleteEventArgs<GetLoginResponse> e)
+        {
+            if (e.Error == null && e.Result != null)
+            {
+                //success
+
+            }
+            else
+            {
+                //failed
+            }
+        }
+
+        private void OnUpdateLoginComplete(CallCompleteEventArgs<UpdateLoginResponse> e)
         {
             if (e.Error == null && e.Result != null)
             {

@@ -3,6 +3,7 @@
 **** GENERATED CODE ****
 ************************/
 using System;
+using Newtonsoft.Json;
 
 namespace WcfServiceDirectory
 {
@@ -32,19 +33,10 @@ namespace WcfServiceDirectory
 			this.serviceExecutor = serviceExecutor; 
 		}
 
-		public void GetLogin(System.String request, Action<CallCompleteEventArgs<DTOs.GetLoginResponse>> callback)
-        {
-			serviceExecutor.Get(typeof(DTOs.GetLoginResponse), "/Login/{request}");
         } 
 
-		public void UpdateLogin(DTOs.UpdateLoginRequest request, Action<CallCompleteEventArgs<DTOs.UpdateLoginResponse>> callback)
-        {
-			serviceExecutor.Post(typeof(DTOs.UpdateLoginResponse), "/Login");
         } 
 
-		public void WriteToLog()
-        {
-			serviceExecutor.Get(typeof(void), "/Login/WriteToLog");
         } 
 
 	}
@@ -63,9 +55,6 @@ namespace WcfServiceDirectory
 			this.serviceExecutor = serviceExecutor; 
 		}
 
-		public void UpdateTradesDatabase(System.String userId, Action<CallCompleteEventArgs<System.Int32>> callback)
-        {
-			serviceExecutor.Post(typeof(System.Int32), "/Trades");
         } 
 
 	}

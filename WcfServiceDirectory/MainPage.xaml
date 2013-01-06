@@ -7,6 +7,12 @@
     d:DesignHeight="300" d:DesignWidth="400">
 
     <Grid x:Name="LayoutRoot" Background="White">
-
+        <!--<StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="GetLoginRequest" Text="" />
+                <TextBlock x:Name="GetLoginResponse" Text="" />
+                <Button x:Name="ExecuteGetLoginS" />
+            </StackPanel>
+        </StackPanel>-->
     </Grid>
 </UserControl>

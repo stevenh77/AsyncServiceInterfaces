@@ -4,7 +4,7 @@
     public class Endpoint
     {
         public string Name { get; set; }
-        public IList<Request> Requests { get; set; }
+        public Request Request { get; set; }
         public Type Response { get; set; }
         public HttpVerb HttpVerb { get; set; }
         public Format RequestFormat { get; set; }

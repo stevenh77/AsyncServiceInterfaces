@@ -14,8 +14,8 @@ namespace WcfServiceDirectory
 
     public interface IServiceExecutor
     {
-        void Get(Type responseType, string uriTemplate);
-        void Post(Type responseType, string uriTemplate);
+        void Get(string uriTemplate, Type responseType);
+        void Post(string uriTemplate, string request, Type responseType);
     }
 
     public class ServiceExecutor : IServiceExecutor
@@ -25,7 +25,7 @@ namespace WcfServiceDirectory
                 UseHttpS = false, BaseAddress = "localhost", Port = 52802 
             };
 
-        public void Get(Type responseType, string uriTemplate)
+        public void Get(string uriTemplate, Type responseType)
         {
             var client = new WebClient();
             var address = GetUri(uriTemplate);
@@ -33,12 +33,12 @@ namespace WcfServiceDirectory
             client.DownloadStringAsync(address);
         }
 
-        public void Post(Type responseType, string uriTemplate)
+        public void Post(string uriTemplate, string request, Type responseType)
         {
             var client = new WebClient();
             var address = GetUri(uriTemplate);
 			client.UploadStringCompleted += (sender, eventArgs) => GetCompletedDelegate(responseType);
-            client.UploadStringAsync(address, "");
+            client.UploadStringAsync(address, request);
         }
 
         private Uri GetUri(string uriTemplate)
