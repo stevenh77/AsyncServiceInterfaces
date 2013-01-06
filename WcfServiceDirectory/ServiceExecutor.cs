@@ -6,13 +6,6 @@ using System.Text;
 
 namespace WcfServiceDirectory
 {
-    public class ServiceEnvironment
-    {
-        public bool UseHttpS { get; set; }
-        public string BaseAddress { get; set; }
-        public int Port { get; set; }
-    }
-
     public interface IServiceExecutor
     {
         void Get<TResponse>(string uriTemplate, Action<CallCompleteEventArgs<TResponse>> callback);
@@ -21,10 +14,7 @@ namespace WcfServiceDirectory
 
     public class ServiceExecutor : IServiceExecutor
     {
-        ServiceEnvironment serviceEnvironment = new ServiceEnvironment() 
-            { 
-                UseHttpS = false, BaseAddress = "localhost", Port = 52802 
-            };
+        ServiceEnvironment serviceEnvironment = new ServiceEnvironment() { UseHttpS = false, BaseAddress = "localhost", Port = 52802 };
 
         public void Get<TResponse>(string uriTemplate, Action<CallCompleteEventArgs<TResponse>> callback)
         {
@@ -55,7 +45,7 @@ namespace WcfServiceDirectory
 
         private Uri GetUri(string uriTemplate)
         {
-            var uriString = string.Format("http{0}://{1}:{2}/Facades{3}",
+            var uriString = string.Format("http{0}://{1}:{2}/Facades{3}", 
                                         serviceEnvironment.UseHttpS ? "s" : "",
                                         serviceEnvironment.BaseAddress,
                                         serviceEnvironment.Port,
@@ -63,25 +53,4 @@ namespace WcfServiceDirectory
             return new Uri(uriString);
         }
     }
-
-    #region CallbackWrapper
-
-    public class CallCompleteEventArgs<T> : AsyncCompletedEventArgs
-    {
-        public CallCompleteEventArgs(T result, AsyncCompletedEventArgs sourceEventArgs)
-            : base(sourceEventArgs.Error, sourceEventArgs.Cancelled, sourceEventArgs.UserState)
-        {
-            Result = result;
-        }
-
-        public CallCompleteEventArgs(T result, Exception exception, bool cancelled, object userState)
-            : base(exception, cancelled, userState)
-        {
-            Result = result;
-        }
-
-        public T Result { get; private set; }
-    }
-
-    #endregion
 }
