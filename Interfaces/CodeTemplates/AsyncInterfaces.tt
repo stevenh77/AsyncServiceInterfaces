@@ -20,28 +20,30 @@ namespace WcfServiceDirectory
 {
 	public partial class Services
     {
-		public Services() 
+		public Services()
 		{ 
 <#
-foreach (Facade facade in facades) 
-{
+		foreach (Facade facade in facades) 
+		{
 #>
 			this.<#=facade.Name.Substring(1)#> = new <#=facade.Name.Substring(1)#>(); 
-<# } #>
+<#
+		} 
+#>
 		}
 
 <# 
-foreach (Facade facade in facades)
-{    
+		foreach (Facade facade in facades)
+		{    
 #>
 		public <#=facade.Name.Substring(1)#> <#=facade.Name.Substring(1)#> { get; set; }
 <#
-}
+		}
 #>
 	}
 <#  
-foreach (var facade in facades)
-{
+		foreach (var facade in facades)
+		{
 #>    
 	public class <#=facade.Name.Substring(1)#>
 	{
@@ -58,21 +60,35 @@ foreach (var facade in facades)
 		}
 
 <#
-foreach(Endpoint endpoint in facade.Endpoints)
-{
-var responseType = (endpoint.Response.Name=="Void") ? "void" : endpoint.Response.FullName;
+			foreach(Endpoint endpoint in facade.Endpoints)
+			{
+				var responseType = (endpoint.Response.Name=="Void") ? "void" : endpoint.Response.FullName;
 
-if (endpoint.HttpVerb==HttpVerb.GET) 
-{
-
-}
+				if (endpoint.HttpVerb==HttpVerb.GET) 
+				{
 #>
-        } 
+		public void <#=endpoint.Name#>(<# if (responseType!="void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
+		{
+			serviceExecutor.Get("<#=endpoint.UriTemplate#>", typeof(<#=responseType#>)); 
+		}
 
 <#
-}
+				}
+				else
+				{
 #>
-	}
+		public void <#=endpoint.Name#>(<#=endpoint.Request.Type.FullName#> <#=endpoint.Request.Name#>, <# if (responseType!="void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
+		{
+			var jsonRequest = JsonConvert.SerializeObject(<#=endpoint.Request.Name#>);
+			serviceExecutor.Post("<#=endpoint.UriTemplate#>", jsonRequest, typeof(<#=responseType#>)); 
+		}
+
+<#
+			}
+		}
+#>
+	}	
+	
 <#
 	}
 }
