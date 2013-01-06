@@ -54,7 +54,7 @@ namespace WcfServiceDirectory
 
         private Uri GetUri(string uriTemplate)
         {
-            var uriString = string.Format("http{0}://{1}:{2}{3}",
+            var uriString = string.Format("http{0}://{1}:{2}/Facades{3}",
                                         serviceEnvironment.UseHttpS ? "s" : "",
                                         serviceEnvironment.BaseAddress,
                                         serviceEnvironment.Port,

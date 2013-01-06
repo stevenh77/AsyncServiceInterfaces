@@ -13,7 +13,7 @@ namespace WcfServiceDirectory
 
             // Second service
             var request = new UpdateLoginRequest() { Payload = "Steve (calling UpdateLogin)" };
-            services.LoginFacade.UpdateLogin(request, this.OnUpdateLoginComplete);
+            //services.LoginFacade.UpdateLogin(request, this.OnUpdateLoginComplete);
 
             // Third service
             services.LoginFacade.WriteToLog();
