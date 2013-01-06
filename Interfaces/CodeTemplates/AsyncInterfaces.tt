@@ -7,9 +7,9 @@
 <#@ include file="Endpoint.ttinclude" #><#@ include file="Facade.ttinclude" #><#@ include file="Format.ttinclude" #><#@ include file="HttpVerb.ttinclude" #><#@ include file="MetadataProvider.ttinclude" #><#@ include file="Request.ttinclude" #><#@ include file="T4Toolbox.tt" #>
 <#
 #>
-/***********************
-**** GENERATED CODE ****
-************************/
+/***************************************************************************************
+**** GENERATED CODE:  Use t4toolbox & tangiblet4editor to update AsyncInterfaces.tt ****
+****************************************************************************************/
 using System;
 using Newtonsoft.Json;
 
