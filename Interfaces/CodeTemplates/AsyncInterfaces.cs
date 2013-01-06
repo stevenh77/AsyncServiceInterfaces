@@ -23,30 +23,22 @@ namespace WcfServiceDirectory
 	{
 		private IServiceExecutor serviceExecutor;
 			
-		public LoginFacade() 
-		{
-			this.serviceExecutor = new ServiceExecutor();
-		}
-        
-		public LoginFacade(IServiceExecutor serviceExecutor) 
-		{ 
-			this.serviceExecutor = serviceExecutor; 
-		}
+		public LoginFacade()  { this.serviceExecutor = new ServiceExecutor(); }
 
 		public void GetLogin(Action<CallCompleteEventArgs<DTOs.GetLoginResponse>> callback)
 		{
-			serviceExecutor.Get("/Login", typeof(DTOs.GetLoginResponse)); 
+			serviceExecutor.Get<DTOs.GetLoginResponse>("/Login", callback);
 		}
 
 		public void UpdateLogin(DTOs.UpdateLoginRequest request, Action<CallCompleteEventArgs<DTOs.UpdateLoginResponse>> callback)
 		{
 			var jsonRequest = JsonConvert.SerializeObject(request);
-			serviceExecutor.Post("/Login", jsonRequest, typeof(DTOs.UpdateLoginResponse)); 
+			serviceExecutor.Post<DTOs.UpdateLoginResponse>("/Login", jsonRequest, callback);
 		}
 
 		public void WriteToLog()
 		{
-			serviceExecutor.Get("/Login/WriteToLog", typeof(void)); 
+			serviceExecutor.Get<Object>("/Login/WriteToLog", null);
 		}
 
 	}	
@@ -56,20 +48,12 @@ namespace WcfServiceDirectory
 	{
 		private IServiceExecutor serviceExecutor;
 			
-		public TradeFacade() 
-		{
-			this.serviceExecutor = new ServiceExecutor();
-		}
-        
-		public TradeFacade(IServiceExecutor serviceExecutor) 
-		{ 
-			this.serviceExecutor = serviceExecutor; 
-		}
+		public TradeFacade()  { this.serviceExecutor = new ServiceExecutor(); }
 
 		public void UpdateTradesDatabase(System.String userId, Action<CallCompleteEventArgs<System.Int32>> callback)
 		{
 			var jsonRequest = JsonConvert.SerializeObject(userId);
-			serviceExecutor.Post("/Trades", jsonRequest, typeof(System.Int32)); 
+			serviceExecutor.Post<System.Int32>("/Trades", jsonRequest, callback);
 		}
 
 	}	

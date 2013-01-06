@@ -49,27 +49,19 @@ namespace WcfServiceDirectory
 	{
 		private IServiceExecutor serviceExecutor;
 			
-		public <#=facade.Name.Substring(1)#>() 
-		{
-			this.serviceExecutor = new ServiceExecutor();
-		}
-        
-		public <#=facade.Name.Substring(1)#>(IServiceExecutor serviceExecutor) 
-		{ 
-			this.serviceExecutor = serviceExecutor; 
-		}
+		public <#=facade.Name.Substring(1)#>()  { this.serviceExecutor = new ServiceExecutor(); }
 
 <#
 			foreach(Endpoint endpoint in facade.Endpoints)
 			{
-				var responseType = (endpoint.Response.Name=="Void") ? "void" : endpoint.Response.FullName;
+				var responseType = (endpoint.Response.Name=="Void") ? "Object" : endpoint.Response.FullName;
 
 				if (endpoint.HttpVerb==HttpVerb.GET) 
 				{
 #>
-		public void <#=endpoint.Name#>(<# if (responseType!="void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
+		public void <#=endpoint.Name#>(<# if (endpoint.Response.Name!="Void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
 		{
-			serviceExecutor.Get("<#=endpoint.UriTemplate#>", typeof(<#=responseType#>)); 
+			serviceExecutor.Get<<#=responseType#>>("<#=endpoint.UriTemplate#>", <# if (endpoint.Response.Name=="Void") {#>null<#} else {#>callback<#}#>);
 		}
 
 <#
@@ -77,10 +69,10 @@ namespace WcfServiceDirectory
 				else
 				{
 #>
-		public void <#=endpoint.Name#>(<#=endpoint.Request.Type.FullName#> <#=endpoint.Request.Name#>, <# if (responseType!="void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
+		public void <#=endpoint.Name#>(<#=endpoint.Request.Type.FullName#> <#=endpoint.Request.Name#>, <# if (endpoint.Response.Name!="Void") {#>Action<CallCompleteEventArgs<<#=endpoint.Response.FullName#>>> callback<#}#>)
 		{
 			var jsonRequest = JsonConvert.SerializeObject(<#=endpoint.Request.Name#>);
-			serviceExecutor.Post("<#=endpoint.UriTemplate#>", jsonRequest, typeof(<#=responseType#>)); 
+			serviceExecutor.Post<<#=responseType#>>("<#=endpoint.UriTemplate#>", jsonRequest, <# if (endpoint.Response.Name=="Void") {#>null<#} else {#>callback<#}#>);
 		}
 
 <#

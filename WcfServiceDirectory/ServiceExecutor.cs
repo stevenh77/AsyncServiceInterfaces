@@ -14,8 +14,8 @@ namespace WcfServiceDirectory
 
     public interface IServiceExecutor
     {
-        void Get(string uriTemplate, Type responseType);
-        void Post(string uriTemplate, string request, Type responseType);
+        void Get<TResponse>(string uriTemplate, Action<CallCompleteEventArgs<TResponse>> callback);
+        void Post<TResponse>(string uriTemplate, string request, Action<CallCompleteEventArgs<TResponse>> callback);
     }
 
     public class ServiceExecutor : IServiceExecutor
@@ -25,19 +25,30 @@ namespace WcfServiceDirectory
                 UseHttpS = false, BaseAddress = "localhost", Port = 52802 
             };
 
-        public void Get(string uriTemplate, Type responseType)
+        public void Get<TResponse>(string uriTemplate, Action<CallCompleteEventArgs<TResponse>> callback)
         {
             var client = new WebClient();
             var address = GetUri(uriTemplate);
-			client.DownloadStringCompleted += (sender, eventArgs) => GetCompletedDelegate(responseType);
+            client.DownloadStringCompleted += (sender, eventArgs) => 
+                {
+                    if (callback == null) return;
+                    var response = JsonConvert.DeserializeObject<TResponse>(eventArgs.Result);
+                    callback(new CallCompleteEventArgs<TResponse>(response, eventArgs)); 
+                };
             client.DownloadStringAsync(address);
         }
 
-        public void Post(string uriTemplate, string request, Type responseType)
+        public void Post<TResponse>(string uriTemplate, string request, Action<CallCompleteEventArgs<TResponse>> callback)
         {
             var client = new WebClient();
             var address = GetUri(uriTemplate);
-			client.UploadStringCompleted += (sender, eventArgs) => GetCompletedDelegate(responseType);
+			client.UploadStringCompleted += (sender, eventArgs) => 
+                {
+                    if (callback == null) return;
+                    var response = JsonConvert.DeserializeObject<TResponse>(eventArgs.Result);
+                    callback(new CallCompleteEventArgs<TResponse>(response, eventArgs)); 
+                };
+
             client.UploadStringAsync(address, request);
         }
 
@@ -49,14 +60,6 @@ namespace WcfServiceDirectory
                                         serviceEnvironment.Port,
                                         uriTemplate);
             return new Uri(uriString);
-        }
-
-        private Action GetCompletedDelegate(Type responseType)
-        {
-            return new Action(() => System.Diagnostics.Debug.WriteLine("callback fired"));
-
-            //var response = JsonConvert.DeserializeObject<typeof(responseType)>(eventArgs.Result);
-            //callback(new CallCompleteEventArgs<typeof(responseType)>(response, eventArgs));   
         }
     }
 
