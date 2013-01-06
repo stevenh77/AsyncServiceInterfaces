@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="WcfServiceDirectory.Web.LoginService" CodeBehind="LoginFacade.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="WcfServiceDirectory.Web.LoginFacade" CodeBehind="LoginFacade.svc.cs" %>

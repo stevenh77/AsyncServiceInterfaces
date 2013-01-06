@@ -1,72 +1,72 @@
    
-using DTOs;
-using Newtonsoft.Json;
+/***********************
+**** GENERATED CODE ****
+************************/
 using System;
-using System.Net;
 
 namespace WcfServiceDirectory
 {
-	public class Services
+	public partial class Services
     {
+		public Services()
+		{ 
+			this.LoginFacade = new LoginFacade(); 
+			this.TradeFacade = new TradeFacade(); 
+		}
+
 		public LoginFacade LoginFacade { get; set; }
 		public TradeFacade TradeFacade { get; set; }
 	}
     
 	public class LoginFacade
 	{
-		public void GetLogin(GetLoginRequest request, Action<CallCompleteEventArgs<GetLoginResponse>> callback)
-        {
-            var client = new WebClient();
-            var address = new Uri(string.Concat("http://server", "/Login"));
+		private IServiceExecutor serviceExecutor;
 			
-            client.DownloadStringCompleted += (sender, eventArgs) =>
-            {
-                var response = JsonConvert.DeserializeObject<GetLoginResponse>(eventArgs.Result);
-                callback(new CallCompleteEventArgs<GetLoginResponse>(response, eventArgs));
-            };
-            
-            client.DownloadStringAsync(address);
-        }
+		public LoginFacade() 
+		{
+			this.serviceExecutor = new ServiceExecutor();
+		}
+        
+		public LoginFacade(IServiceExecutor serviceExecutor) 
+		{ 
+			this.serviceExecutor = serviceExecutor; 
+		}
 
-		public void UpdateLogin(Action<CallCompleteEventArgs<UpdateLoginResponse>> callback)
+		public void GetLogin(System.String request, Action<CallCompleteEventArgs<DTOs.GetLoginResponse>> callback)
         {
-            var client = new WebClient();
-            var address = new Uri(string.Concat("http://server", "/Login"));
-			
-            client.UploadStringCompleted += (sender, eventArgs) =>
-            {
-                var response = JsonConvert.DeserializeObject<UpdateLoginResponse>(eventArgs.Result);
-                callback(new CallCompleteEventArgs<UpdateLoginResponse>(response, eventArgs));
-            };
-            
-            client.UploadStringAsync(address);
-        }
+			serviceExecutor.Get(typeof(DTOs.GetLoginResponse), "/Login/{request}");
+        } 
+
+		public void UpdateLogin(DTOs.UpdateLoginRequest request, Action<CallCompleteEventArgs<DTOs.UpdateLoginResponse>> callback)
+        {
+			serviceExecutor.Post(typeof(DTOs.UpdateLoginResponse), "/Login");
+        } 
 
 		public void WriteToLog()
         {
-            var client = new WebClient();
-            var address = new Uri(string.Concat("http://server", "/Login"));
-			
-            client.DownloadStringAsync(address);
-        }
+			serviceExecutor.Get(typeof(void), "/Login/WriteToLog");
+        } 
 
 	}
     
 	public class TradeFacade
 	{
-		public void UpdateTradesDatabase(String userId, Action<CallCompleteEventArgs<Int32>> callback)
-        {
-            var client = new WebClient();
-            var address = new Uri(string.Concat("http://server", "/Trades"));
+		private IServiceExecutor serviceExecutor;
 			
-            client.UploadStringCompleted += (sender, eventArgs) =>
-            {
-                var response = JsonConvert.DeserializeObject<Int32>(eventArgs.Result);
-                callback(new CallCompleteEventArgs<Int32>(response, eventArgs));
-            };
-            
-            client.UploadStringAsync(address);
-        }
+		public TradeFacade() 
+		{
+			this.serviceExecutor = new ServiceExecutor();
+		}
+        
+		public TradeFacade(IServiceExecutor serviceExecutor) 
+		{ 
+			this.serviceExecutor = serviceExecutor; 
+		}
+
+		public void UpdateTradesDatabase(System.String userId, Action<CallCompleteEventArgs<System.Int32>> callback)
+        {
+			serviceExecutor.Post(typeof(System.Int32), "/Trades");
+        } 
 
 	}
 }

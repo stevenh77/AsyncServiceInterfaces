@@ -9,15 +9,15 @@ namespace Interfaces
     public interface ILoginFacade
     {
         [OperationContract]
-        [WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, Method = "GET", UriTemplate = "/Login")]
-        GetLoginResponse GetLogin(GetLoginRequest request);
+        [WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, Method = "GET", UriTemplate = "/Login/{request}")]
+        GetLoginResponse GetLogin(string request);
 
         [OperationContract]
         [WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, Method = "PUT", UriTemplate = "/Login")]
-        UpdateLoginResponse UpdateLogin();
+        UpdateLoginResponse UpdateLogin(UpdateLoginRequest request);
 
         [OperationContract]
-        [WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, Method = "GET", UriTemplate = "/Login")]
+        [WebInvoke(RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, Method = "GET", UriTemplate = "/Login/WriteToLog")]
         void WriteToLog();
     }
 }
