@@ -4,9 +4,31 @@
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="System.CodeDom.Compiler" #>
 <#@ assembly name="System.Core" #> <#@ assembly name="System.ServiceModel" #> <#@ assembly name="System.ServiceModel.Web" #> 
-<#@ include file="Endpoint.ttinclude" #><#@ include file="Facade.ttinclude" #><#@ include file="Format.ttinclude" #><#@ include file="HttpVerb.ttinclude" #><#@ include file="MetadataProvider.ttinclude" #><#@ include file="Request.ttinclude" #><#@ include file="T4Toolbox.tt" #>
+<#@ include file="WriteFile.ttinclude" #><#@ include file="Endpoint.ttinclude" #><#@ include file="Facade.ttinclude" #><#@ include file="Format.ttinclude" #><#@ include file="HttpVerb.ttinclude" #><#@ include file="MetadataProvider.ttinclude" #><#@ include file="Request.ttinclude" #><#@ include file="T4Toolbox.tt" #>
 <#
-#>
+	var facades = new MetadataProvider().GetFacades();
+
+	foreach (Facade facade in facades) 
+	{
+#>   
+/***************************************************************************************
+**** GENERATED CODE:  Use t4toolbox & tangiblet4editor to update AsyncInterfaces.tt ****
+****************************************************************************************/
+namespace WcfServiceDirectory
+{
+	public partial class Services
+    {
+        <#=facade.Name.Substring(1)#> facade = new <#=facade.Name.Substring(1)#>();
+        public <#=facade.Name.Substring(1)#> <#=facade.Name.Substring(1)#> { get { return facade; } }
+	}
+}
+<# 
+		SaveOutput("Services_" + facade + ".cs");
+	}
+  
+	foreach (var facade in facades)
+	{
+#>    
 /***************************************************************************************
 **** GENERATED CODE:  Use t4toolbox & tangiblet4editor to update AsyncInterfaces.tt ****
 ****************************************************************************************/
@@ -15,35 +37,6 @@ using Newtonsoft.Json;
 
 namespace WcfServiceDirectory
 {
-	public partial class Services
-    {
-		public Services()
-		{ 
-<#
-	var facades = new MetadataProvider().GetFacades();
-
-	foreach (Facade facade in facades) 
-	{
-#>
-			this.<#=facade.Name.Substring(1)#> = new <#=facade.Name.Substring(1)#>(); 
-<#
-	} 
-#>
-		}
-
-<# 
-	foreach (Facade facade in facades)
-	{    
-#>
-		public <#=facade.Name.Substring(1)#> <#=facade.Name.Substring(1)#> { get; set; }
-<#
-	}
-#>
-	}
-<#  
-	foreach (var facade in facades)
-	{
-#>    
 	public class <#=facade.Name.Substring(1)#>
 	{
 		private IServiceExecutor serviceExecutor;
@@ -70,8 +63,9 @@ namespace WcfServiceDirectory
 <#
 	}
 #>
-	}	
+	}
+}	
 <#
+	SaveOutput(facade.Name.Substring(1) + ".cs");
 }
 #>
-}

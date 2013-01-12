@@ -49,6 +49,7 @@
     <None Include="CodeTemplates\Endpoint.ttinclude" />
     <None Include="CodeTemplates\Facade.ttinclude" />
     <None Include="CodeTemplates\Format.ttinclude" />
+    <None Include="CodeTemplates\WriteFile.ttinclude" />
     <None Include="CodeTemplates\HttpVerb.ttinclude" />
     <None Include="CodeTemplates\MetadataProvider.ttinclude" />
     <None Include="CodeTemplates\AsyncInterfaces.cs">
@@ -76,7 +77,9 @@
       <Name>DTOs</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="CodeOutput\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

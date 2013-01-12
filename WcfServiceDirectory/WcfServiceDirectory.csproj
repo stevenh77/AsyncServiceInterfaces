@@ -74,8 +74,11 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Interfaces\CodeTemplates\AsyncInterfaces.cs">
-      <Link>AsyncInterfaces.cs</Link>
+    <Compile Include="..\Interfaces\CodeOutput\LoginFacade.cs">
+      <Link>Services\LoginFacade.cs</Link>
+    </Compile>
+    <Compile Include="..\Interfaces\CodeOutput\Services_ILoginFacade.cs">
+      <Link>Services\Services_ILoginFacade.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
